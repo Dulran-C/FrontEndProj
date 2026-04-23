@@ -1,26 +1,41 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // ✅ for ngFor
-import { IonicModule } from '@ionic/angular';   // ✅ for Ionic components
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-explore',
-  standalone: true, // ✅ MUST be here
-  imports: [CommonModule, IonicModule], // ✅ THIS FIXES YOUR ERROR
+  standalone: true,
+  imports: [CommonModule, IonicModule],
   templateUrl: './explore.page.html',
-  styleUrls: ['./explore.page.scss'],
 })
 export class ExplorePage {
 
   data: any[] = [];
+  savedIds: Set<string> = new Set();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private storageService: StorageService
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const storage = await this.storageService.getStorage();
+
     this.http.get('https://jsonplaceholder.typicode.com/posts')
       .subscribe((res: any) => {
         this.data = res;
       });
+
+    const keys = await storage.keys();
+    keys.forEach((k: string) => this.savedIds.add(k));
   }
 
+  async saveFavourite(item: any) {
+    const storage = await this.storageService.getStorage();
+
+    await storage.set(item.id.toString(), item);
+    this.savedIds.add(item.id.toString());
+  }
 }
