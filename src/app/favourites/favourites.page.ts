@@ -11,19 +11,19 @@ import { StorageService } from '../services/storage.service';
 })
 export class FavouritesPage {
 
-  favourites: any[] = [];
+  completed: any[] = [];
 
   constructor(private storageService: StorageService) {}
 
   async ionViewWillEnter() {
     await this.storageService.init();
 
-    const keys = await this.storageService.getAllKeys();
-    this.favourites = [];
+    const habits = await this.storageService.get('habits');
 
-    for (let key of keys) {
-      const item = await this.storageService.get(key);
-      if (item) this.favourites.push(item);
+    if (habits && Array.isArray(habits)) {
+      this.completed = habits.filter((h: any) => h.done);
+    } else {
+      this.completed = [];
     }
   }
 }

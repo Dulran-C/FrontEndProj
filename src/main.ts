@@ -3,6 +3,7 @@ import { provideRouter, withPreloading, PreloadAllModules } from '@angular/route
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { provideHttpClient } from '@angular/common/http';
+
 import { importProvidersFrom } from '@angular/core';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
@@ -16,11 +17,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
 
-    importProvidersFrom(
-      IonicStorageModule.forRoot({
-        name: '__mydb',
-        driverOrder: ['indexeddb', 'localstorage']
-      })
-    )
+    
+    importProvidersFrom(IonicStorageModule.forRoot())
   ],
 });

@@ -1,20 +1,24 @@
 <ion-header>
   <ion-toolbar color="primary">
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+
     <ion-title>Completed Habits</ion-title>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <ion-card *ngFor="let item of favourites">
-
+  <ion-card *ngFor="let item of completed">
     <ion-card-header>
       <ion-card-title>{{ item.title }}</ion-card-title>
     </ion-card-header>
-
   </ion-card>
 
-  <ion-text *ngIf="favourites.length === 0">
+  <ion-text *ngIf="completed.length === 0">
     <p>No habits completed yet.</p>
   </ion-text>
 

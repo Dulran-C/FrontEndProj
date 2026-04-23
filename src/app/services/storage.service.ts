@@ -23,14 +23,4 @@ export class StorageService {
     await this.init();
     return this.storage.get(key);
   }
-
-  async getAllKeys() {
-    await this.init();
-    return this.storage.keys();
-  }
-
-  async remove(key: string) {
-    await this.init();
-    return this.storage.remove(key);
-  }
 }

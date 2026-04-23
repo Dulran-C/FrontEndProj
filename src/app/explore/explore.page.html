@@ -1,32 +1,41 @@
 <ion-header>
   <ion-toolbar color="primary">
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+
     <ion-title>My Habits</ion-title>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  
+ 
   <ion-card>
     <ion-card-content>
-      Completed: {{ completedCount }} / {{ data.length }}
+      <ion-progress-bar 
+        [value]="habits.length ? completedCount / habits.length : 0">
+      </ion-progress-bar>
+
+      <p>{{ completedCount }} / {{ habits.length }} completed</p>
     </ion-card-content>
   </ion-card>
 
   
   <ion-item>
-    <ion-input
-      [(ngModel)]="newHabit"
-      placeholder="Add new habit...">
-    </ion-input>
-
-    <ion-button (click)="addHabit()">
-      Add
-    </ion-button>
+    <ion-input [(ngModel)]="newHabit" placeholder="Add new habit..."></ion-input>
+    <ion-button (click)="addHabit()">Add</ion-button>
   </ion-item>
 
-  
-  <ion-card *ngFor="let item of data">
+
+  <ion-text *ngIf="habits.length === 0">
+    <p>No habits yet. Add one above 👆</p>
+  </ion-text>
+
+
+  <ion-card *ngFor="let item of habits" [class.completed]="item.done">
 
     <ion-card-header>
       <ion-card-title>{{ item.title }}</ion-card-title>
@@ -37,11 +46,18 @@
       <ion-button
         expand="block"
         (click)="toggleHabit(item)"
-        [disabled]="savedIds.has(item.id)">
-        {{ savedIds.has(item.id) ? 'Completed' : 'Mark Complete' }}
+        [color]="item.done ? 'success' : 'primary'">
+
+        <ion-icon 
+          slot="start"
+          [name]="item.done ? 'checkmark-circle' : 'add-circle'">
+        </ion-icon>
+
+        {{ item.done ? 'Completed' : 'Mark Complete' }}
+
       </ion-button>
 
-      <ion-button color="danger" size="small" (click)="deleteHabit(item.id)">
+      <ion-button fill="clear" color="danger" (click)="deleteHabit(item.id)">
         Delete
       </ion-button>
 

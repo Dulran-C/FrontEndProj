@@ -9,65 +9,77 @@ import { StorageService } from '../services/storage.service';
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
   templateUrl: './explore.page.html',
+  styleUrls: ['./explore.page.scss'],
 })
 export class ExplorePage {
 
-  data: any[] = [];
-  savedIds: Set<number> = new Set();
+  habits: any[] = [];
   newHabit: string = '';
 
   constructor(private storageService: StorageService) {}
 
-  async ngOnInit() {
+  
+  async ionViewWillEnter() {
+    await this.loadHabits();
+  }
+
+  async loadHabits() {
     await this.storageService.init();
 
-    // default habits
-    this.data = [
-      { id: 1, title: "Drink Water", done: false },
-      { id: 2, title: "Study Coding", done: false },
-      { id: 3, title: "Go for a Walk", done: false },
-      { id: 4, title: "Workout", done: false }
-    ];
+    const stored = await this.storageService.get('habits');
 
-    const keys = await this.storageService.getAllKeys();
-    keys.forEach((k: string) => this.savedIds.add(Number(k)));
+    if (stored && Array.isArray(stored)) {
+      this.habits = stored;
+    } else {
+      this.habits = [
+        { id: 1, title: "Drink Water", done: false },
+        { id: 2, title: "Study Coding", done: false },
+        { id: 3, title: "Go for a Walk", done: false },
+        { id: 4, title: "Workout", done: false }
+      ];
+      await this.saveHabits();
+    }
+  }
+
+  async saveHabits() {
+    const clean = JSON.parse(JSON.stringify(this.habits));
+    await this.storageService.set('habits', clean);
   }
 
   get completedCount() {
-    return this.savedIds.size;
+    return this.habits.filter(h => h.done).length;
   }
 
   async addHabit() {
     if (!this.newHabit.trim()) return;
 
-    const newItem = {
-      id: Date.now(),
-      title: this.newHabit,
-      done: false
-    };
+    this.habits = [
+      {
+        id: Date.now(),
+        title: this.newHabit,
+        done: false,
+        createdAt: new Date()
+      },
+      ...this.habits
+    ];
 
-    this.data.unshift(newItem);
     this.newHabit = '';
+    await this.saveHabits();
   }
 
   async toggleHabit(item: any) {
-    const key = item.id.toString();
+    this.habits = this.habits.map(h => {
+      if (h.id === item.id) {
+        return { ...h, done: !h.done };
+      }
+      return h;
+    });
 
-    if (this.savedIds.has(item.id)) {
-      await this.storageService.remove(key);
-      this.savedIds.delete(item.id);
-      item.done = false;
-      return;
-    }
-
-    await this.storageService.set(key, item);
-    this.savedIds.add(item.id);
-    item.done = true;
+    await this.saveHabits();
   }
 
-  deleteHabit(id: number) {
-    this.data = this.data.filter(h => h.id !== id);
-    this.savedIds.delete(id);
-    this.storageService.remove(id.toString());
+  async deleteHabit(id: number) {
+    this.habits = this.habits.filter(h => h.id !== id);
+    await this.saveHabits();
   }
 }
