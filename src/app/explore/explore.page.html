@@ -1,24 +1,52 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Explore</ion-title>
+    <ion-title>My Habits</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
+  
+  <ion-card>
+    <ion-card-content>
+      Completed: {{ completedCount }} / {{ data.length }}
+    </ion-card-content>
+  </ion-card>
+
+  
+  <ion-item>
+    <ion-input
+      [(ngModel)]="newHabit"
+      placeholder="Add new habit...">
+    </ion-input>
+
+    <ion-button (click)="addHabit()">
+      Add
+    </ion-button>
+  </ion-item>
+
+  
   <ion-card *ngFor="let item of data">
+
     <ion-card-header>
       <ion-card-title>{{ item.title }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
+
       <ion-button
         expand="block"
-        (click)="saveFavourite(item)"
+        (click)="toggleHabit(item)"
         [disabled]="savedIds.has(item.id)">
-        {{ savedIds.has(item.id) ? 'Saved' : 'Save to Favourites' }}
+        {{ savedIds.has(item.id) ? 'Completed' : 'Mark Complete' }}
       </ion-button>
+
+      <ion-button color="danger" size="small" (click)="deleteHabit(item.id)">
+        Delete
+      </ion-button>
+
     </ion-card-content>
+
   </ion-card>
 
 </ion-content>

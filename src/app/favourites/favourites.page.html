@@ -1,19 +1,21 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Favourites</ion-title>
+    <ion-title>Completed Habits</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
   <ion-card *ngFor="let item of favourites">
+
     <ion-card-header>
       <ion-card-title>{{ item.title }}</ion-card-title>
     </ion-card-header>
+
   </ion-card>
 
-  <p *ngIf="favourites.length === 0">
-    No favourites saved yet.
-  </p>
+  <ion-text *ngIf="favourites.length === 0">
+    <p>No habits completed yet.</p>
+  </ion-text>
 
 </ion-content>
