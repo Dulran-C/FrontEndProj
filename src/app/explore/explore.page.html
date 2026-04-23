@@ -14,9 +14,9 @@
     <ion-card-content>
       <ion-button
         expand="block"
-        [disabled]="savedIds.has(item.id.toString())"
-        (click)="saveFavourite(item)">
-        {{ savedIds.has(item.id.toString()) ? 'Saved' : 'Save to Favourites' }}
+        (click)="saveFavourite(item)"
+        [disabled]="savedIds.has(item.id)">
+        {{ savedIds.has(item.id) ? 'Saved' : 'Save to Favourites' }}
       </ion-button>
     </ion-card-content>
   </ion-card>

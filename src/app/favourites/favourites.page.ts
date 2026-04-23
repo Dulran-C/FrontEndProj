@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { StorageService } from '../services/storage.service';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-favourites',
@@ -12,17 +12,19 @@ import { StorageService } from '../services/storage.service';
 export class FavouritesPage {
 
   favourites: any[] = [];
+  private storage!: Storage;
 
-  constructor(private storageService: StorageService) {}
+  constructor(private storageCtrl: Storage) {}
 
   async ionViewWillEnter() {
-  const storage = await this.storageService.getStorage(); 
-  const keys = await storage.keys(); 
-  this.favourites = [];
+    this.storage = await this.storageCtrl.create();
 
-  for (let key of keys) {
-    const item = await storage.get(key);
-    this.favourites.push(item);
+    const keys = await this.storage.keys();
+    this.favourites = [];
+
+    for (let key of keys) {
+      const item = await this.storage.get(key);
+      this.favourites.push(item);
+    }
   }
-}
 }

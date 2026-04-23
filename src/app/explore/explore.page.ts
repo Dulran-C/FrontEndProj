@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
-import { StorageService } from '../services/storage.service';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-explore',
@@ -13,29 +13,25 @@ import { StorageService } from '../services/storage.service';
 export class ExplorePage {
 
   data: any[] = [];
-  savedIds: Set<string> = new Set();
+  savedIds: Set<number> = new Set();
+  private storage!: Storage;
 
-  constructor(
-    private http: HttpClient,
-    private storageService: StorageService
-  ) {}
+  constructor(private http: HttpClient, private storageCtrl: Storage) {}
 
   async ngOnInit() {
-    const storage = await this.storageService.getStorage();
+    this.storage = await this.storageCtrl.create();
 
     this.http.get('https://jsonplaceholder.typicode.com/posts')
       .subscribe((res: any) => {
         this.data = res;
       });
 
-    const keys = await storage.keys();
-    keys.forEach((k: string) => this.savedIds.add(k));
+    const keys = await this.storage.keys();
+    keys.forEach(k => this.savedIds.add(Number(k)));
   }
 
   async saveFavourite(item: any) {
-    const storage = await this.storageService.getStorage();
-
-    await storage.set(item.id.toString(), item);
-    this.savedIds.add(item.id.toString());
+    await this.storage.set(item.id.toString(), item);
+    this.savedIds.add(item.id);
   }
 }
