@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Explore</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <h1>EXPLORE LOADED</h1>
+
+  <ion-button (click)="testClick()">
+    TEST BUTTON
+  </ion-button>
+
+  <ion-card *ngFor="let item of data">
+    <ion-card-header>
+      <ion-card-title>{{ item.title }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-button (click)="saveFavourite(item)">
+        Save to Favourites
+      </ion-button>
+    </ion-card-content>
+
+  </ion-card>
+
+</ion-content>
