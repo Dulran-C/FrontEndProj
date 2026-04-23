@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+
 import { StorageService } from '../services/storage.service';
+import { Device } from '@capacitor/device';
 
 @Component({
   selector: 'app-explore',
@@ -16,11 +19,27 @@ export class ExplorePage {
   habits: any[] = [];
   newHabit: string = '';
 
-  constructor(private storageService: StorageService) {}
+  constructor(
+    private storageService: StorageService,
+    private http: HttpClient
+  ) {}
 
   
   async ionViewWillEnter() {
     await this.loadHabits();
+
+    
+    this.http.get('https://jsonplaceholder.typicode.com/posts')
+      .subscribe((data: any) => {
+        console.log(
+          "API DATA:",
+          Array.isArray(data) ? data.slice(0, 3) : data
+        );
+      });
+
+    
+    const info = await Device.getInfo();
+    console.log("DEVICE INFO:", info);
   }
 
   async loadHabits() {
